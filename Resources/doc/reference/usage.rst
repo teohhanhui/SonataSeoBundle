@@ -51,6 +51,22 @@ However, it is possible to alter these values at runtime:
         ->addMeta('property', 'og:description', $post->getAbstract())
     ;
 
+To remove some logic from controller it is possible to implement Sonata\SeoBundle\Seo\SeoMetaInterface and/or
+Sonata\SeoBundle\Seo\SeoOgInterface in your object. In this case controller might look like:
+
+.. code-block:: php
+
+    <?php
+
+    $post = $this->getPostManager()->findOneByPermalink($permalink, $this->container->get('sonata.news.blog'));
+
+    $this->container->get('sonata.seo.page')
+        ->setSeoObject($post)
+        ->addMeta('property', 'og:url',  $this->generateUrl('sonata_news_view', array(
+            'permalink'  => $this->getBlog()->getPermalinkGenerator()->generate($post, true)
+        ), true))
+    ;
+
 
 These values can be used inside a twig template.
 

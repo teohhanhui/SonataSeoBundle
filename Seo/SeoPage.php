@@ -9,6 +9,7 @@
  */
 
 namespace Sonata\SeoBundle\Seo;
+use Sonata\SeoBundle\Traits\SeoOgEntity;
 
 /**
  *
@@ -261,5 +262,49 @@ class SeoPage implements SeoPageInterface
     public function getLangAlternates()
     {
         return  $this->langAlternates;
+    }
+
+    /**
+     * Defines what interfaces are implemented by object and retrieves data from them
+     *
+     * @param $object
+     */
+    public function setSeoObject($object)
+    {
+        if ($object instanceof SeoMetaInterface) {
+            $this->setSeoMeta($object);
+        }
+        if ($object instanceof SeoOgInterface) {
+            $this->setSeoOg($object);
+        }
+    }
+
+    /**
+     * Adds meta information from th object
+     */
+    protected function setSeoMeta(SeoMetaInterface $object)
+    {
+        $metaTitle = $object->getMetaTitle();
+        if (!empty($metaTitle)) {
+            $this->setTitle($metaTitle);
+        }
+        $metaDescription = $object->getMetaDescription();
+        if (!empty($metaDescription)) {
+            $this->addMeta('name', 'description', $metaDescription);
+        }
+        $metaKeywords = $object->getMetaKeywords();
+        if (!empty($metaKeywords)) {
+            $this->addMeta('name', 'keywords', $metaKeywords);
+        }
+    }
+
+    /**
+     * Adds og properties from the object
+     */
+    protected function setSeoOg(SeoOgInterface $object)
+    {
+        foreach ($object->getOgProperties() as $name => $value) {
+            $this->addMeta('property', $name, $value);
+        }
     }
 }

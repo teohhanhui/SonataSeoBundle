@@ -132,4 +132,32 @@ class SeoPageTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($page->hasMeta('property', 'test'));
         $this->assertFalse($page->hasMeta('property', 'fake'));
     }
+
+    public function testSeoObject()
+    {
+        $object = new SeoObject();
+        $object->setMetaDescription('description value');
+        $object->setMetaTitle('title value');
+        $object->setMetaKeywords('keywords value');
+        $object->setOgTitle('og:title value');
+        $object->setOgDescription('og:description value');
+        $page = new SeoPage();
+        $page->setSeoObject($object);
+
+        $expected = array(
+            'http-equiv' => array(),
+            'name'       => array(
+                'description'   => array('description value', array()),
+                'keywords'      => array('keywords value', array()),
+             ),
+            'schema'     => array(),
+            'charset'    => array(),
+            'property'   => array(
+                'og:title'      => array('og:title value', array()),
+                'og:description'=> array('og:description value', array()),
+            ),
+        );
+        $this->assertEquals($expected, $page->getMetas());
+        $this->assertEquals('title value', $page->getTitle());
+    }
 }
